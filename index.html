@@ -1,75 +1,151 @@
-<!DOCTYPE html>
 <html>
+
 <head>
-  <meta charset='utf-8'>
 
-  <title>cdzombak/timer @ GitHub</title>
+	<title>Countdown Timer</title>
 
-  <style type="text/css">
-    body {
-      margin-top: 1.0em;
-      background-color: #3ccb1e;
-      font-family: Helvetica, Arial, FreeSans, san-serif;
-      color: #ffffff;
-    }
-    #container {
-      margin: 0 auto;
-      width: 700px;
-    }
-    h1 { font-size: 3.8em; color: #c334e1; margin-bottom: 3px; }
-    h1 .small { font-size: 0.4em; }
-    h1 a { text-decoration: none }
-    h2 { font-size: 1.5em; color: #c334e1; }
-    h3 { text-align: center; color: #c334e1; }
-    a { color: #c334e1; }
-    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-    .download { float: right; }
-    pre { background: #000; color: #fff; padding: 15px;}
-    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-    .footer { text-align:center; padding-top:30px; font-style: italic; }
-  </style>
+	<script type="text/javascript">
+	
+	var initTime;
+	var secondsLeft;	// holds time remaining during countdown
+	var warnTime;		// time at which warning is thrown
+	var t;				// timer handle
+	
+	var titleSuffix  = " seconds: Countdown Timer";
+	var stoppedTitle = "Countdown Timer";
+	
+	var normalColor = "#ffffff";
+	var warnColor   = "#ffff00";
+	var zeroColor   = "#ff0000";
+	
+	var normalSize  = "6em";
+	var warnSize    = "7.5em";
+	var zeroSize    = "7.5em";
+	
+	function start() {
+		initTime = secondsLeft = document.getElementById('countTime').value;
+		warnTime = document.getElementById('warnTime').value;
+		stop();
+		t = setInterval("doCount();", 1000);
+		display();
+	}
+	
+	function display() {
+		document.getElementById('time').innerHTML = secondsLeft;
+		document.title = secondsLeft + "/" + initTime  + titleSuffix;
+	}
+	
+	function doCount() {
+		secondsLeft--;
+		display();
+		if (secondsLeft <= warnTime && !(secondsLeft<=0)) {
+			doWarn();
+		}
+		if (secondsLeft <= 0) {
+			doZero();
+		}
+	}
+	
+	function doWarn() {
+		document.getElementById('page').style.backgroundColor = warnColor;
+		document.getElementById('time').style.fontSize = warnSize;
+	}
+	
+	function doZero() {
+		document.getElementById('page').style.backgroundColor = zeroColor;
+		document.getElementById('time').style.fontSize = zeroSize;
+	}
+	
+	function reset() {
+		clearInterval(t);
+		document.getElementById('page').style.backgroundColor = normalColor;
+		document.getElementById('time').style.fontSize = normalSize;
+		document.getElementById('time').innerHTML = "";
+		document.title = stoppedTitle;
+	}
+	
+	function stop() {
+		// reset() calls clearInterval() and resets the page
+		reset();
+	}
+	
+	</script>
+
+	<style  type="text/css">
+	body {
+		font-size: 1.1em;
+		font-family: "Palatino Linotype", Palatino, Palladio, "URW Palladio L", "Book Antiqua", Baskerville, "Bookman Old Style", "Bitstream Charter", "Nimbus Roman No9 L", Garamond, "Apple Garamond", "ITC Garamond Narrow", "New Century Schoolbook", "Century Schoolbook", "Century Schoolbook L", Georgia, serif;
+	}
+	#time {
+		font-size: 6em;
+	}
+	#timeCont {
+		width: 400px;
+		padding: 20px;
+		padding-top: 0;
+		font-size: 1.3em;
+		background-color: #ededed;
+		border: 1px solid #bbbbbb;
+		text-align: center;
+		margin: 50px auto 20px auto;
+	}
+	#control {
+		width: 400px;
+		text-align: center;
+		margin-left: auto;
+		margin-right: auto;
+	}
+	#control button {
+		font-size: 1.3em;
+		margin-left: 12px;
+		margin-right: 12px;
+		padding: 6px;
+		font-family: "Palatino Linotype", Palatino, Palladio, "URW Palladio L", "Book Antiqua", Baskerville, "Bookman Old Style", "Bitstream Charter", "Nimbus Roman No9 L", Garamond, "Apple Garamond", "ITC Garamond Narrow", "New Century Schoolbook", "Century Schoolbook", "Century Schoolbook L", Georgia, serif;
+	}
+	#startbtn {
+		color: #00bb00;
+	}
+	#stopbtn {
+		color: #ff0000;
+	}
+	#timeBox, #warnTimeBox {
+		font-size: .9em;
+		margin-top: 20px;
+		display: block;
+	}
+	#warnTimeBox {
+		margin-top: 10px;
+	}
+	#timeBox input, #warnTimeBox input {
+		margin-top: -2px;
+		font-size: 1.1em;
+		width: 2.5em;
+	}
+	#shortcuts {
+		font-size: .8em;
+		line-height: 1.4em;
+		margin-top: 12px;
+		display: block;
+	{
+	</style>
+
 </head>
 
-<body>
-  <a href="http://github.com/cdzombak/timer"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+<body id="page">
 
-  <div id="container">
+	<div id="timeCont"><span id="time"></span><br />seconds remaining</div>
+	
+	<div id="control">
+		<button onclick="javascript:start();" id="startbtn" accesskey="S">Start/Clear</button>
+		<button onclick="javascript:stop();" id="stopbtn" accesskey="X">Stop/Reset</button><br />
+		<span id="timeBox">time: <input type="text" value="90" id="countTime" /> seconds</span>
+		<span id="warnTimeBox">warn at: <input type="text" value="15" id="warnTime" /> seconds</span>
+		<span id="shortcuts">
+			<strong>start:</strong> alt-shift-S<br />
+			<strong>stop:</strong> alt-shift-X
+		</span>
+	</div>
 
-    <div class="download">
-      <a href="http://github.com/cdzombak/timer/zipball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/zip.png"></a>
-      <a href="http://github.com/cdzombak/timer/tarball/master">
-        <img border="0" width="90" src="http://github.com/images/modules/download/tar.png"></a>
-    </div>
-
-    <h1><a href="http://github.com/cdzombak/timer">timer</a>
-      <span class="small">by <a href="http://github.com/cdzombak">cdzombak</a></span></h1>
-
-    <div class="description">
-      simple JS countdown timer
-    </div>
-
-    <h2>Contact</h2>
-<p>Chris Dzombak (chris@chrisdzombak.net)<br/>      </p>
-
-
-    <h2>Download</h2>
-    <p>
-      You can download this project in either
-      <a href="http://github.com/cdzombak/timer/zipball/master">zip</a> or
-      <a href="http://github.com/cdzombak/timer/tarball/master">tar</a> formats.
-    </p>
-    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
-      by running:
-      <pre>$ git clone git://github.com/cdzombak/timer</pre>
-    </p>
-
-    <div class="footer">
-      get the source code on GitHub : <a href="http://github.com/cdzombak/timer">cdzombak/timer</a>
-    </div>
-
-  </div>
-
-  
 </body>
+
 </html>
